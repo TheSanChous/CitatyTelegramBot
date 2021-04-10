@@ -20,11 +20,11 @@ async def get_random_present():
     async with aiohttp.ClientSession() as session:
         async with session.get(f'https://millionstatusov.ru/aforizmy/page-{random.randint(0, 578)}.html') as response:
             parser = BeautifulSoup(await response.text(), 'html.parser')
-            citat = random.choice(parser.find_all('div', class_='cont_text'))
-            picture = citat.find('img', 'img-responsive img100')
-            if picture != None:
-               picture = 'https://millionstatusov.ru' + picture.attrs['src']
-            result = {'text': citat.text, 'picture': picture}
+            quote = random.choice(parser.find_all('div', class_='cont_text'))
+            picture = quote.find('img', 'img-responsive img100')
+            if picture is not None:
+                picture = 'https://millionstatusov.ru' + picture.attrs['src']
+            result = {'text': quote.text, 'picture': picture}
             return result
 
 
@@ -36,5 +36,5 @@ async def search(query: str) -> list:
                                       class_="field field-name-body field-type-text-with-summary field-label-hidden")
             if len(results) == 0:
                 raise SearchError(f'{query}')
-            citats = [i.text for i in results]
-            return citats
+            quotes = [i.text for i in results]
+            return quotes
