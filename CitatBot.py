@@ -2,11 +2,11 @@ from config import API_TOKEN
 from aiogram import Bot, Dispatcher, executor, types
 from QuoteBotSourse import *
 
-bot = Bot(token=API_TOKEN, parse_mode='MarkdownV2')
+bot = Bot(token=API_TOKEN, parse_mode='Markdown')
 dp = Dispatcher(bot)
 
 commands = {
-    "start": ["/start"],
+    "start": ["/start", "start"],
     "help": ["/help", "help", "помощь"],
     "menu": ["меню", "Меню", "menu", "/menu"],
     "random": ["/random", "/rand", "random", "случайная цитата", "случайная", "найди любую"]
@@ -19,6 +19,8 @@ async def callback_query(call: types.CallbackQuery):
         await click_random(call.message)
     elif call.data == "menu":
         await click_main_menu(call.message)
+    elif call.data == "search":
+        await click_search(call.message)
     elif call.data.startswith("move"):
         await move_button_click(call)
 
@@ -26,7 +28,7 @@ async def callback_query(call: types.CallbackQuery):
 @dp.message_handler(content_types=["text"])
 async def text_messages(message: types.Message):
     if message.text in commands["start"]:
-        pass
+        await send_hello(message)
     elif message.text in commands["menu"]:
         await send_main_menu(message)
     elif message.text in commands["random"]:

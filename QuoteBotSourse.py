@@ -14,11 +14,15 @@ quotes_comments = [
 ]
 
 
+async def send_hello(message: types.Message):
+    await message.answer(text="*Ура!*\nВы успешно подписались на этого бота!\nДавайте начнем c /help, или поищем что-то интересное - /random", reply_markup=get_menu_buttons())
+
+
 async def send_random_list(message: types.Message):
     quote = await QuoteRepos.get_random_present()
     text = quote['text']
     picture = quote['picture']
-    await message.answer(text=f'{text}[⁯]({picture})', reply_markup=get_move_buttons(query="random"))
+    await message.answer(text=f'_{random.choice(quotes_comments)}_\n{text}[⁯]({picture})', reply_markup=get_move_buttons(query="random"))
 
 
 async def send_main_menu(message: types.Message):
@@ -29,7 +33,7 @@ async def send_random(message: types.Message):
     quote = await QuoteRepos.get_random_present()
     text = quote['text']
     picture = quote['picture']
-    await message.answer(text=f'{text}[⁯]({picture})', reply_markup=get_menu_button())
+    await message.answer(text=f'_{random.choice(quotes_comments)}_\n{text}[⁯]({picture})', reply_markup=get_menu_button())
     
 
 async def send_search_list(message: types.Message):
@@ -39,7 +43,7 @@ async def send_search_list(message: types.Message):
         await message.answer(f"_Ничего не найдено по запросу_ *'{err.message}'*", reply_markup=get_menu_buttons())
         return
     keyboard = get_move_buttons(query=message.text, is_last=len(quotes) < 1)
-    await message.answer(text=f'_{random.choice(quotes_comments)}_ :*{quotes[0]}{1}/{len(quotes)}*', reply_markup=keyboard)
+    await message.answer(text=f'_{random.choice(quotes_comments)}_\n*{quotes[0]}{1}/{len(quotes)}*', reply_markup=keyboard)
 
 
 async def click_main_menu(message: types.Message):
@@ -50,7 +54,7 @@ async def click_random(message: types.Message):
     quote = await QuoteRepos.get_random_present()
     text = quote['text']
     picture = quote['picture']
-    await message.edit_text(text=f'_{random.choice(quotes_comments)}_ *"{quote["text"]}"* [⁯]({quote["picture"]})', reply_markup=get_move_buttons("random"))
+    await message.edit_text(text=f'_{random.choice(quotes_comments)}_\n*"{quote["text"]}"* [⁯]({quote["picture"]})', reply_markup=get_move_buttons("random", id=0, is_last=False))
 
 
 async def click_search_list(message: types.Message):
@@ -60,7 +64,11 @@ async def click_search_list(message: types.Message):
         await message.edit_text(f'_Ничего не найдено по запросу_ *"{err.message}"*', reply_markup=get_menu_buttons())
         return
     keyboard = get_move_buttons(query=message.text, is_last=len(quotes) < 1)
-    await message.edit_text(f"_{random.choice(quotes_comments)}_ {quotes[0]}", reply_markup=keyboard)
+    await message.edit_text(f"_{random.choice(quotes_comments)}_\n{quotes[0]}", reply_markup=keyboard)
+
+
+async def click_search(message: types.Message):
+    await message.edit_text(text="Чтобы начать посик, напишите мне пару ключевых слов.\n_Например: солнце_", reply_markup=get_menu_buttons())
 
 
 def get_menu_button():
@@ -117,5 +125,5 @@ async def move_button_click(call: types.CallbackQuery):
         id += 1
     quotes = await QuoteRepos.search(query)
     keyboard = get_move_buttons(query=query, id=id, is_last=len(quotes)-1 == id)
-    await call.message.edit_text(f'_{random.choice(quotes_comments)}_ {quotes[id]}{id+1}/{len(quotes)}')
+    await call.message.edit_text(f'_{random.choice(quotes_comments)}_\n*"{quotes[id]}"*\n_{id+1}/{len(quotes)}_')
     await call.message.edit_reply_markup(keyboard)
