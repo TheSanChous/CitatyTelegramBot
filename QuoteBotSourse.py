@@ -159,12 +159,11 @@ def get_move_buttons(query: str, id: int = 0, is_last: bool = False, saves = Fal
 
 
 async def move_button_click(call: types.CallbackQuery):
-    await call.answer(text="Идет поиск...")
     args = call.data[10:-1].split(";")
     direction = call.data[5:9]
     query = args[0]
     if query == "random":
-        await click_random(call.message)
+        await click_random(call)
         return
     id = int(args[1])
     if direction == "back":
