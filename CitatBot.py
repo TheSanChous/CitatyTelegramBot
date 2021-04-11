@@ -16,13 +16,21 @@ commands = {
 @dp.callback_query_handler(lambda call: True)
 async def callback_query(call: types.CallbackQuery):
     if call.data == "random":
-        await click_random(call.message)
+        await click_random(call)
     elif call.data == "menu":
         await click_main_menu(call.message)
     elif call.data == "search":
         await click_search(call.message)
+    elif call.data == "save":
+        await click_save(call)
+    elif call.data == "delete":
+        await click_delete(call)
+    elif call.data == "saves":
+        await click_saves(call.message)
     elif call.data.startswith("move"):
         await move_button_click(call)
+    elif call.data == "close_menu":
+        await call.message.delete()
 
 
 @dp.message_handler(content_types=["text"])
@@ -32,11 +40,11 @@ async def text_messages(message: types.Message):
     elif message.text in commands["menu"]:
         await send_main_menu(message)
     elif message.text in commands["random"]:
-        await send_random_list(message)
+        await send_list(message, "random")
     elif message.text in commands["help"]:
         pass
     else:
-        await send_search_list(message)
+        await send_list(message, query=message.text)
 
 
 def start_bot():
