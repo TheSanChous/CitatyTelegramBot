@@ -42,7 +42,7 @@ async def text_messages(message: types.Message):
     elif message.text in commands["random"]:
         await send_list(message, "random")
     elif message.text in commands["help"]:
-        pass
+        await send_help(message)
     else:
         await send_list(message, query=message.text)
 
