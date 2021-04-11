@@ -16,7 +16,7 @@ async def get_picture_by_themes(themes: list) -> str:
             parser = BeautifulSoup(await response.text(), 'html.parser')
             url = ""
             try:
-                url = parser.find_all("a", class_="file-container__link").find("img", class_="file-container__image").attrs["src"]
+                url = parser.find("a", class_="file-container__link").find("img", class_="file-container__image").attrs["src"]
             finally:
                 return url
 
