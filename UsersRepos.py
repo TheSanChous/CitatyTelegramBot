@@ -2,13 +2,14 @@ from config import DATABASE_URL
 import psycopg2
 
 
-def try_subscribe_user(chat_id: int) -> bool:
+def ensure_subscribe_user(chat_id: object):
     connection = psycopg2.connect(DATABASE_URL, sslmode='require')
     cursor = connection.cursor()
     cursor.execute(f'SELECT "Id" FROM public."Users" WHERE "ChatId" = {chat_id};')
     result = cursor.fetchone()
     if result is None:
         cursor.execute(f'INSERT INTO public."Users" ("ChatId") VALUES ({chat_id});')
+        connection.commit()
         connection.close()
         return True
     else:

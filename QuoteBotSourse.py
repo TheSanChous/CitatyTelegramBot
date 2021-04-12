@@ -16,7 +16,7 @@ quotes_comments = [
 
 
 async def send_hello(message: types.Message):
-    if UsersRepos.try_subscribe_user(message.chat.id):
+    if UsersRepos.ensure_subscribe_user(message.chat.id):
         await message.answer(text="*Ура!*\nВы успешно подписались!\nДавайте начнем - /help\nИли поищем что-то интересное - /random", reply_markup=get_menu_buttons())
     else:
         await message.answer(
@@ -141,7 +141,7 @@ def get_menu_buttons():
     return keyboard
 
 
-def get_move_buttons(query: str, id: int = 0, is_last: bool = False, saves = False):
+def get_move_buttons(query: str, id: int = 0, is_last: bool=False, saves=False):
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     if id > 0 and not is_last:
         keyboard.add(types.InlineKeyboardButton(text="Предыдущая", callback_data=f'move_back[{query};{id}]'),

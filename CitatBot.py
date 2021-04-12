@@ -15,6 +15,8 @@ commands = {
 
 @dp.callback_query_handler(lambda call: True)
 async def callback_query(call: types.CallbackQuery):
+    """for first time"""
+    UsersRepos.ensure_subscribe_user(call.message.chat.id)
     if call.data == "random":
         await click_random(call)
     elif call.data == "menu":
@@ -35,6 +37,8 @@ async def callback_query(call: types.CallbackQuery):
 
 @dp.message_handler(content_types=["text"])
 async def text_messages(message: types.Message):
+    """for first time"""
+    UsersRepos.ensure_subscribe_user(message.chat.id)
     if message.text in commands["start"]:
         await send_hello(message)
     elif message.text in commands["menu"]:
