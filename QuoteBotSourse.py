@@ -17,10 +17,13 @@ quotes_comments = [
 
 async def send_hello(message: types.Message):
     if UsersRepos.ensure_subscribe_user(message.chat.id):
-        await message.answer(text="*Ура!*\nВы успешно подписались!\nДавайте начнем - /help\nИли поищем что-то интересное - /random", reply_markup=get_menu_buttons())
+        await message.answer(
+            text="*Ура!*\nВы успешно подписались!\nДавайте начнем - /help\nИли поищем что-то интересное - /random",
+            reply_markup=get_menu_buttons())
     else:
         await message.answer(
-            text="*Ура!*\nВы уже подписанны!\nДавайте начнем - /help\nИли поищем что-то интересное - /random", reply_markup=get_menu_buttons())
+            text="*Ура!*\nВы уже подписанны!\nДавайте начнем - /help\nИли поищем что-то интересное - /random",
+            reply_markup=get_menu_buttons())
 
 
 async def send_help(message: types.Message):
@@ -66,7 +69,10 @@ async def send_list(message: types.Message, query: str, id: int = 0):
         else:
             content = content_dict[id]
             list_length = len(content_dict)
-            keyboard = get_move_buttons(query="saves", id=id, is_last= list_length-1 == id,  saves=True)
+            keyboard = get_move_buttons(query="saves", id=id, is_last=list_length - 1 == id, saves=True)
+    elif query == 'instagram':
+        content_dict = QuoteRepos.get_for_instagram()
+
     else:
         try:
             content_list = await QuoteRepos.search(query)
@@ -78,12 +84,14 @@ async def send_list(message: types.Message, query: str, id: int = 0):
         if themes is not None:
             picture_url = await QuoteRepos.get_picture_by_themes(themes)
         list_length = len(content_list)
-        keyboard = get_move_buttons(query=query, id=id, is_last=list_length-1 == id)
+        keyboard = get_move_buttons(query=query, id=id, is_last=list_length - 1 == id)
 
     if message.from_user.is_bot:
-        await message.edit_text(text=f'_{header}_*"{content}"*\n_{id + 1}/{list_length}_[⁯]({picture_url})', reply_markup=keyboard)
+        await message.edit_text(text=f'_{header}_*"{content}"*\n_{id + 1}/{list_length}_[⁯]({picture_url})',
+                                reply_markup=keyboard)
     else:
-        await message.answer(text=f'_{header}_*"{content}"*\n_{id + 1}/{list_length}_[⁯]({picture_url}', reply_markup=keyboard)
+        await message.answer(text=f'_{header}_*"{content}"*\n_{id + 1}/{list_length}_[⁯]({picture_url}',
+                             reply_markup=keyboard)
 
 
 async def send_main_menu(message: types.Message):
@@ -100,7 +108,8 @@ async def click_random(call: types.CallbackQuery):
 
 
 async def click_search(message: types.Message):
-    await message.edit_text(text="Чтобы начать посик, напишите мне пару ключевых слов.\n_Например: солнце_", reply_markup=get_menu_buttons())
+    await message.edit_text(text="Чтобы начать посик, напишите мне пару ключевых слов.\n_Например: солнце_",
+                            reply_markup=get_menu_buttons())
 
 
 async def click_save(call: types.CallbackQuery):
@@ -141,7 +150,7 @@ def get_menu_buttons():
     return keyboard
 
 
-def get_move_buttons(query: str, id: int = 0, is_last: bool=False, saves=False):
+def get_move_buttons(query: str, id: int = 0, is_last: bool = False, saves=False):
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     if id > 0 and not is_last:
         keyboard.add(types.InlineKeyboardButton(text="Предыдущая", callback_data=f'move_back[{query};{id}]'),
@@ -171,3 +180,8 @@ async def move_button_click(call: types.CallbackQuery):
     elif direction == "next":
         id += 1
     await send_list(message=call.message, query=query, id=id)
+
+
+async def send_admin_on_subscribe(message: types.Message):
+    await message.bot.send_message(chat_id=1029619116,
+                                   text=f"{message.from_user.full_name} ({message.chat.id}) subscribed!")

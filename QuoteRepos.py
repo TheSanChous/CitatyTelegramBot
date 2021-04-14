@@ -53,8 +53,18 @@ async def search(query: str) -> list:
             return quotes
 
 
-
-
+async def get_for_instagram() -> list:
+    async with aiohttp.ClientSession() as session:
+        async with session.get('https://allcitations.ru/tema/instagram') as response:
+            parser = BeautifulSoup(await response.text(), 'html.parser')
+            results = parser.find_all('div', class_="cittext")
+            quotes = []
+            for i in results:
+                themes = i.find("cat_tags")
+                if themes is not None:
+                    themes = [i.text for i in themes.find_all("a")]
+                quotes.append({"content": i.text, "themes":themes})
+            return quotes
 
 
 
