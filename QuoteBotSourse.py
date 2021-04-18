@@ -47,10 +47,16 @@ async def send_help(message: types.Message):
 
 
 async def send_list(message: types.Message, query: str, id: int = 0):
+    send_method = None
+    if message.from_user.is_bot:
+        send_method = message.edit_text
+    else:
+        send_method = message.answer
+    await send_method(text='🔎\nПодождите, идет поиск цитаты. \n_Это не займет много времени._ [⁯](https://cdn.dribbble.com/users/1785190/screenshots/3906047/search.gif)')
     header = f"{random.choice(quotes_comments)}\n"
     content = None
-    keyboard = None
     picture_url = ""
+    keyboard = None
     list_length = 1
     if query is "random":
         content_dict = await QuoteRepos.get_random()
@@ -86,12 +92,7 @@ async def send_list(message: types.Message, query: str, id: int = 0):
         list_length = len(content_list)
         keyboard = get_move_buttons(query=query, id=id, is_last=list_length - 1 == id)
 
-    if message.from_user.is_bot:
-        await message.edit_text(text=f'_{header}_*"{content}"*\n_{id + 1}/{list_length}_[⁯]({picture_url})',
-                                reply_markup=keyboard)
-    else:
-        await message.answer(text=f'_{header}_*"{content}"*\n_{id + 1}/{list_length}_[⁯]({picture_url}',
-                             reply_markup=keyboard)
+    await send_method(text=f'_{header}_\n"`{content}`"\n\n*Нажмите на текст, чтобы скопировать*\n_{id + 1}/{list_length}_[⁯]({picture_url})', reply_markup=keyboard)
 
 
 async def send_main_menu(message: types.Message):
@@ -168,6 +169,7 @@ def get_move_buttons(query: str, id: int = 0, is_last: bool = False, saves=False
 
 
 async def move_button_click(call: types.CallbackQuery):
+    await call.answer(text="Идет поиск...")
     args = call.data[10:-1].split(";")
     direction = call.data[5:9]
     query = args[0]
