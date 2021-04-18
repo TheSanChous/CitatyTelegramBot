@@ -77,8 +77,10 @@ async def send_list(message: types.Message, query: str, id: int = 0):
             list_length = len(content_dict)
             keyboard = get_move_buttons(query="saves", id=id, is_last=list_length - 1 == id, saves=True)
     elif query == 'instagram':
-        content_dict = QuoteRepos.get_for_instagram()
-
+        content_dict = await QuoteRepos.get_for_instagram()
+        content = content_dict[id]["content"]
+        list_length = len(content_dict)
+        keyboard = get_move_buttons(query="instagram", id=id, is_last=list_length - 1 == id)
     else:
         try:
             content_list = await QuoteRepos.search(query)
@@ -132,6 +134,10 @@ async def click_saves(message: types.Message):
     await send_list(message=message, query="saves")
 
 
+async def click_instagram(call: types.CallbackQuery):
+    await call.answer(text="Идет поиск...")
+    await send_list(call.message, query="instagram")
+
 def get_menu_button():
     keyboard = types.InlineKeyboardMarkup(row_width=1)
     keyboard.add(
@@ -145,6 +151,7 @@ def get_menu_buttons():
     keyboard.add(
         types.InlineKeyboardButton(text="Случайная цитата", callback_data="random"),
         types.InlineKeyboardButton(text="Найти цитату", callback_data="search"),
+        types.InlineKeyboardButton(text="Лучшие для инстаграм", callback_data="instagram"),
         types.InlineKeyboardButton(text="Избранное", callback_data="saves"),
         types.InlineKeyboardButton(text="Закрыть это меню", callback_data="close_menu")
     )

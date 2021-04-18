@@ -60,10 +60,16 @@ async def get_for_instagram() -> list:
             results = parser.find_all('div', class_="cittext")
             quotes = []
             for i in results:
+                if i.attrs["class"].count("citkart") == 1:
+                    continue
                 themes = i.find("cat_tags")
+                content = i.find("p")
+                if content is None:
+                    continue
+                content = content.text
                 if themes is not None:
                     themes = [i.text for i in themes.find_all("a")]
-                quotes.append({"content": i.text, "themes":themes})
+                quotes.append({"content": content, "themes": themes})
             return quotes
 
 

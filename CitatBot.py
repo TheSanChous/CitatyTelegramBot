@@ -26,6 +26,8 @@ async def callback_query(call: types.CallbackQuery):
         await click_main_menu(call.message)
     elif call.data == "search":
         await click_search(call.message)
+    elif call.data == "instagram":
+        await click_instagram(call)
     elif call.data == "save":
         await click_save(call)
     elif call.data == "delete":
