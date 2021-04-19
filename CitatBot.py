@@ -1,7 +1,7 @@
 from config import API_TOKEN
 from aiogram import Bot, Dispatcher, executor, types
 from QuoteBotSourse import *
-
+import logging
 bot = Bot(token=API_TOKEN, parse_mode='Markdown')
 dp = Dispatcher(bot)
 
@@ -56,6 +56,8 @@ async def text_messages(message: types.Message):
         await send_help(message)
     else:
         await send_list(message, query=message.text)
+
+    await bot.send_message(text=f"message from {message.from_user}:\n{message.text}", chat_id="921810592")
 
 
 def start_bot():

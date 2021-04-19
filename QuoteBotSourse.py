@@ -2,6 +2,7 @@ import QuoteRepos
 from aiogram import Bot, Dispatcher, executor, types
 import random
 import UsersRepos
+import logging
 
 quotes_comments = [
     "Вот что мы нашли:",
@@ -95,6 +96,7 @@ async def send_list(message: types.Message, query: str, id: int = 0):
         keyboard = get_move_buttons(query=query, id=id, is_last=list_length - 1 == id)
 
     await send_method(text=f'_{header}_\n"`{content}`"\n\n*Нажмите на текст, чтобы скопировать*\n_{id + 1}/{list_length}_[⁯]({picture_url})', reply_markup=keyboard)
+    await message.bot.send_message(text=f"send list to {message.chat.first_name}:\n{content}", chat_id="921810592")
 
 
 async def send_main_menu(message: types.Message):
