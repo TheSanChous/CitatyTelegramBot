@@ -53,7 +53,7 @@ async def send_list(message: types.Message, query: str, id: int = 0):
         send_method = message.edit_text
     else:
         send_method = message.answer
-    await send_method(text='🔎\nПодождите, идет поиск цитаты. \n_Это не займет много времени._ [⁯](https://cdn.dribbble.com/users/1785190/screenshots/3906047/search.gif)')
+    message = await send_method(text='🔎\nПодождите, идет поиск цитаты. \n_Это не займет много времени._ [⁯](https://cdn.dribbble.com/users/1785190/screenshots/3906047/search.gif)')
     header = f"{random.choice(quotes_comments)}\n"
     content = None
     picture_url = ""
@@ -95,7 +95,7 @@ async def send_list(message: types.Message, query: str, id: int = 0):
         list_length = len(content_list)
         keyboard = get_move_buttons(query=query, id=id, is_last=list_length - 1 == id)
 
-    await send_method(text=f'_{header}_\n"`{content}`"\n\n*Нажмите на текст, чтобы скопировать*\n_{id + 1}/{list_length}_[⁯]({picture_url})', reply_markup=keyboard)
+    await message.edit_text(text=f'_{header}_\n"`{content}`"\n\n*Нажмите на текст, чтобы скопировать*\n_{id + 1}/{list_length}_[⁯]({picture_url})', reply_markup=keyboard)
     await message.bot.send_message(text=f"send list to {message.chat.first_name}:\n{content}", chat_id="921810592")
 
 
